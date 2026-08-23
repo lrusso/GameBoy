@@ -696,7 +696,14 @@ var JoyStick = function JoyStick(t, e) {var i = void 0 === (e = e || {}).title ?
       })
 
       window.addEventListener("focus", function () {
-        if (globals.window["GAMEBOY_RUNNING"] && globals.window["GAMEBOY_PAUSED"]) {
+        // Not gated on GAMEBOY_PAUSED alone: ios can fire a spurious focus
+        // that clears it while the emulator is still in the background, so a
+        // dead loop also counts as needing a resume.
+        if (
+          globals.window["GAMEBOY_RUNNING"] &&
+          (globals.window["GAMEBOY_PAUSED"] ||
+            globals.window["GAMEBOY_RAF_ID"] === null)
+        ) {
           globals.window["GAMEBOY_PAUSED"] = false
           globals.window["GAMEBOY_LAST_FRAME_TIME"] = 0 // reset timing to avoid fast-forward
           globals.window["GAMEBOY_AUDIO_FRAME_COUNT"] = 0 // discard stale buffered samples
@@ -707,6 +714,9 @@ var JoyStick = function JoyStick(t, e) {var i = void 0 === (e = e || {}).title ?
           ) {
             globals.window["GAMEBOY_AUDIO_CTX"].resume()
           }
+
+          // no-op when the loop is already alive
+          startLoop()
         }
 
         // thank you chrome
