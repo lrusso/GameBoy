@@ -491,9 +491,17 @@ var JoyStick = function JoyStick(t, e) {var i = void 0 === (e = e || {}).title ?
 
     var elapsed = timestamp - globals.window["GAMEBOY_LAST_FRAME_TIME"]
     if (elapsed >= globals.window["GAMEBOY_FRAME_TIME"] - 1) {
-      globals.window["GAMEBOY_LAST_FRAME_TIME"] =
-        globals.window["GAMEBOY_LAST_FRAME_TIME"] +
-        globals.window["GAMEBOY_FRAME_TIME"]
+      // after a stall (file picker, app switch, gc pause) the accumulated
+      // debt would be repaid one frame per rAF callback, which is double
+      // speed on a 120hz display. drop it when more than 3 frames of debt
+      // would be left after this one, matching the cap MAME already uses.
+      if (elapsed - globals.window["GAMEBOY_FRAME_TIME"] > globals.window["GAMEBOY_FRAME_TIME"] * 3) {
+        globals.window["GAMEBOY_LAST_FRAME_TIME"] = timestamp
+      } else {
+        globals.window["GAMEBOY_LAST_FRAME_TIME"] =
+          globals.window["GAMEBOY_LAST_FRAME_TIME"] +
+          globals.window["GAMEBOY_FRAME_TIME"]
+      }
       globals.window["GAMEBOY_RETRO"].run()
       flushAudio()
     }
