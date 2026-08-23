@@ -715,7 +715,9 @@ var JoyStick = function JoyStick(t, e) {var i = void 0 === (e = e || {}).title ?
             globals.window["GAMEBOY_AUDIO_CTX"].resume()
           }
 
-          // no-op when the loop is already alive
+          // startLoop() returns early when GAMEBOY_RAF_ID already holds a
+          // live id, so this cannot schedule a second loop. it only has an
+          // effect when stopLoop() had killed the chain.
           startLoop()
         }
 
