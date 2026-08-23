@@ -1223,8 +1223,17 @@ var JoyStick = function JoyStick(t, e) {var i = void 0 === (e = e || {}).title ?
             var stateData = new Uint8Array(e.target.result)
             var bufPtr = Module._malloc(stateData.length)
             Module.HEAPU8.set(stateData, bufPtr)
-            globals.window["GAMEBOY_RETRO"].unserialize(bufPtr, stateData.length)
+            var ok = globals.window["GAMEBOY_RETRO"].unserialize(
+              bufPtr,
+              stateData.length
+            )
             Module._free(bufPtr)
+
+            // the core rejected the state: leave the emulator untouched
+            // rather than resetting audio for a load that never happened.
+            if (!ok) {
+              return
+            }
 
             // Reset audio timing to avoid crackling after state load
             globals.window["GAMEBOY_AUDIO_FRAME_COUNT"] = 0
