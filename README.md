@@ -19,7 +19,7 @@ A Game Boy and Game Boy Color emulator with mobile compatibility designed for ru
 
 ## How to use it:
 
-Examples of loading local and online files can be found [here](https://github.com/lrusso/GameBoy/blob/main/GameBoy.htm#L141-L175) and [here](https://github.com/lrusso/GameBoy/blob/main/GameBoy.htm#L203-L232).
+Examples of loading local and online files can be found [here](https://github.com/lrusso/GameBoy/blob/main/GameBoy.htm#L166-L200) and [here](https://github.com/lrusso/GameBoy/blob/main/GameBoy.htm#L231-L260).
 
 ```js
 embedGameBoy({
